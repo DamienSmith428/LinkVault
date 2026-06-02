@@ -49,7 +49,6 @@ androidx-documentfile = { group = "androidx.documentfile", name = "documentfile"
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 youtubedl-android = { group = "io.github.junkfood02.youtubedl-android", name = "library", version.ref = "youtubedl" }
 youtubedl-ffmpeg = { group = "io.github.junkfood02.youtubedl-android", name = "ffmpeg", version.ref = "youtubedl" }
-# youtubedl-python is no longer needed as a separate dependency in newer versions
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
