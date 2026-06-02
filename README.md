@@ -100,40 +100,6 @@ LinkVault does not collect, transmit, or store any personal data. Everything sta
 
 ---
 
-## Building from Source
-
-**Requirements:**
-- Android Studio Hedgehog or newer
-- Android SDK 26+
-- JDK 17+
-
-**Steps:**
-
-```bash
-git clone https://github.com/yourusername/linkvault.git
-```
-
-Open the project in Android Studio, let Gradle sync, then run on a device or emulator. To build a release APK go to **Build → Generate Signed Bundle / APK**.
-
----
-
-## Project Structure
-
-```
-app/
-└── src/main/
-    ├── java/.../linkvault/
-    │   ├── ui/                    Screens and components
-    │   ├── viewmodel/             ViewModels (MVVM)
-    │   ├── data/                  Room database, DAOs, repositories
-    │   ├── downloader/            yt-dlp wrapper and download queue
-    │   ├── metadata/              Metadata scraping and ID3 tag embedding
-    │   └── importexport/          ZIP import and export logic
-    └── res/                       Layouts, drawables, strings
-```
-
----
-
 ## Who This Is For
 
 - People who want to own their music instead of streaming it
