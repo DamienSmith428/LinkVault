@@ -50,7 +50,6 @@ class DownloadWorker @AssistedInject constructor(
 
             val globalDownloadLocation = userPreferences.downloadLocation.first()
             
-            // Use a unique temp directory for each download to avoid conflicts
             val tempBaseDir = context.getExternalFilesDir("temp_downloads") ?: context.cacheDir
             val downloadDir = File(tempBaseDir, "download_${downloadId}_${System.currentTimeMillis()}")
             if (!downloadDir.exists()) downloadDir.mkdirs()
@@ -58,17 +57,14 @@ class DownloadWorker @AssistedInject constructor(
             val request = YoutubeDLRequest(download.url)
             request.addOption("-o", "${downloadDir.absolutePath}/%(title)s.%(ext)s")
 
-            // Add metadata and thumbnail options
             request.addOption("--write-thumbnail")
             request.addOption("--convert-thumbnails", "jpg")
             request.addOption("--embed-thumbnail")
             request.addOption("--add-metadata")
             request.addOption("--embed-chapters")
             
-            // Fetch link details to get manual metadata
             val link = repository.getLinkById(download.linkId)
             if (link != null) {
-                // If user provided manual metadata, use it
                 if (link.artist.isNotBlank() || link.title.isNotBlank()) {
                     val metadataTemplate = buildString {
                         if (link.artist.isNotBlank()) append("%(artist)s")
@@ -80,7 +76,6 @@ class DownloadWorker @AssistedInject constructor(
                     }
                 }
                 
-                // Add specific metadata fields if they exist
                 if (link.artist.isNotBlank()) {
                     request.addOption("--postprocessor-args", "ffmpeg:-metadata artist=\"${link.artist}\"")
                 }
@@ -91,11 +86,9 @@ class DownloadWorker @AssistedInject constructor(
                     request.addOption("--postprocessor-args", "ffmpeg:-metadata date=\"${link.releaseYear}\"")
                 }
             } else {
-                // Default template if no link found
                 request.addOption("--metadata-from-title", "%(artist)s - %(title)s")
             }
             
-            // Optimized options for mobile and YouTube Music
             request.addOption("--no-mtime")
             request.addOption("--no-check-certificate")
             request.addOption("--no-part") 
@@ -104,7 +97,6 @@ class DownloadWorker @AssistedInject constructor(
             request.addOption("--prefer-free-formats")
             request.addOption("--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
             
-            // Apply format selection
             if (download.formatSelection == "audio") {
                 request.addOption("-f", "bestaudio")
                 request.addOption("--extract-audio")
@@ -120,7 +112,6 @@ class DownloadWorker @AssistedInject constructor(
                 Log.v(TAG, "ytdlp output: $line")
 
                 val currentProgress = progress.toInt()
-                // Update only on significant progress to prevent system lag
                 if (currentProgress > lastProgress) {
                     lastProgress = currentProgress
                     
@@ -139,11 +130,9 @@ class DownloadWorker @AssistedInject constructor(
 
             repository.updateStatus(downloadId, DownloadStatus.COMPLETED)
             
-            // Log final temp directory state
             val finalFiles = downloadDir.listFiles()
             Log.d(TAG, "Download finished. Files in temp dir: ${finalFiles?.joinToString { it.name } ?: "None"}")
 
-            // Move files (media + thumbnail) to SAF location if configured
             if (globalDownloadLocation.isNotEmpty()) {
                 moveFilesToSaf(downloadDir, globalDownloadLocation)
             }
@@ -183,7 +172,6 @@ class DownloadWorker @AssistedInject constructor(
                     else -> "application/octet-stream"
                 }
 
-                // Check if file already exists in SAF to avoid duplicates or name conflicts
                 val existingFile = docFile.findFile(file.name)
                 if (existingFile != null) {
                     Log.w(TAG, "File already exists in SAF, skipping: ${file.name}")
@@ -210,7 +198,6 @@ class DownloadWorker @AssistedInject constructor(
                 }
             }
             
-            // Clean up the temp directory
             tempDir.delete()
         } catch (e: Exception) {
             Log.e(TAG, "Error moving files to SAF", e)
