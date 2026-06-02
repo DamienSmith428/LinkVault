@@ -56,7 +56,6 @@ fun ShareBottomSheetContent(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val folders by viewModel.folders.collectAsStateWithLifecycle()
 
-    // Set URL once
     if (uiState.url.isEmpty() && url.isNotEmpty()) {
         viewModel.setUrl(url)
     }
@@ -69,7 +68,6 @@ fun ShareBottomSheetContent(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,7 +103,6 @@ fun ShareBottomSheetContent(
                 }
             }
 
-            // URL & Title Preview
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -153,7 +150,6 @@ fun ShareBottomSheetContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Folders Section
             if (folders.isNotEmpty()) {
                 Text(
                     "Save to folder",
@@ -179,7 +175,6 @@ fun ShareBottomSheetContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // Create New Folder
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -266,7 +261,6 @@ fun ShareBottomSheetContent(
         }
     }
 
-    // Duplicate Dialog
     if (uiState.showDuplicateDialog) {
         AlertDialog(
             onDismissRequest = viewModel::dismissDuplicateDialog,
