@@ -1,6 +1,3 @@
-# LinkVault ProGuard Rules
-
-# Global stability for native/complex libraries
 -dontshrink
 -dontoptimize
 -dontobfuscate
