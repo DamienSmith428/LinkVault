@@ -70,7 +70,6 @@ fun AboutScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Developer Credits
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)),
                 modifier = Modifier.fillMaxWidth()
