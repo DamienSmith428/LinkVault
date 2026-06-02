@@ -62,7 +62,6 @@ fun SettingsScreen(
                 )
                 viewModel.setDownloadLocation(it.toString())
             } catch (e: Exception) {
-                // Ignore errors for now
             }
         }
     }
@@ -96,7 +95,6 @@ fun SettingsScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Storage Section
             SectionHeader("Storage")
             SettingsItem(
                 title = "Download Location",
@@ -118,7 +116,6 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Theme Section
             SectionHeader("Appearance")
             themeOptions.forEach { (mode, label) ->
                 RadioRow(
@@ -130,7 +127,6 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // App Info
             SectionHeader("About")
             SettingsItem(
                 title = "About LinkVault",
