@@ -101,6 +101,5 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.youtubedl.android)
     implementation(libs.youtubedl.ffmpeg)
-    // implementation(libs.youtubedl.python) // Removed as it's no longer needed separately
     debugImplementation(libs.androidx.ui.tooling)
 }
