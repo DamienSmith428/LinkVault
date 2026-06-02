@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkVault — Own Your Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --surface: #0d1117;
+    --border: #1a2030;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --text: #e8edf5;
+    --muted: #4a5568;
+    --card: #0f1520;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: rgba(0,212,255,0.06);
+    top: -200px; right: -100px;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: rgba(124,58,237,0.07);
+    bottom: -100px; left: -100px;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(8,11,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo span { color: var(--text); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  main {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(52px, 10vw, 96px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 .line1 { display: block; color: var(--text); }
+  .hero h1 .line2 {
+    display: block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: #33ddff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,212,255,0.3);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-scroll {
+    margin-top: 80px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: fadeUp 0.6s 0.5s ease both;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(var(--accent), transparent);
+    animation: scrollLine 2s infinite;
+  }
+
+  @keyframes scrollLine {
+    0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    50% { opacity: 1; transform: scaleY(1); }
+    100% { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* FEATURES */
+  .section {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin-bottom: 64px;
+    color: var(--text);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .feature-card {
+    background: var(--card);
+    padding: 36px 32px;
+    transition: background 0.2s;
+  }
+
+  .feature-card:hover { background: #121a27; }
+
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .feature-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .feature-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* DOWNLOAD */
+  .download-section {
+    padding: 100px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .download-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .apk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 48px;
+  }
+
+  .apk-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .apk-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,212,255,0.1);
+  }
+
+  .apk-card.recommended {
+    border-color: rgba(0,212,255,0.4);
+    background: rgba(0,212,255,0.04);
+  }
+
+  .apk-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    width: fit-content;
+  }
+
+  .apk-arch {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .apk-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .apk-arrow {
+    color: var(--accent);
+    font-size: 18px;
+    margin-top: auto;
+  }
+
+  /* SUBPAGES NAV */
+  .subpages {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .subpage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 48px;
+  }
+
+  .subpage-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 32px;
+    text-decoration: none;
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .subpage-card:hover {
+    border-color: var(--accent2);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(124,58,237,0.15);
+  }
+
+  .subpage-num {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+  }
+
+  .subpage-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .subpage-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .subpage-link {
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: auto;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  footer p {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  footer a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--accent); }
+
+  .footer-links { display: flex; gap: 24px; }
+
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    .nav-links { gap: 20px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .hero-buttons { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Link<span>Vault</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#download">Download</a></li>
+    <li><a href="changelog.html">Changelog</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="https://github.com/DamienSmith428/LinkVault" target="_blank">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">v1.0 now available</div>
+    <h1>
+      <span class="line1">Own Your</span>
+      <span class="line2">Media.</span>
+    </h1>
+    <p class="hero-sub">
+      Organize links, download audio with full metadata and album art, and carry your entire media library in your pocket. No subscriptions. No cloud. No nonsense.
+    </p>
+    <div class="hero-buttons">
+      <a href="#download" class="btn-primary">
+        ↓ Download APK
+      </a>
+      <a href="https://github.com/DamienSmith428/LinkVault" target="_blank" class="btn-secondary">
+        View Source
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      scroll
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <p class="section-label">What it does</p>
+    <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">📁</span>
+        <h3>Folder Organization</h3>
+        <p>Build your library your way. Custom folders, your structure, no algorithm deciding what you see.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⬇️</span>
+        <h3>Built-in Downloader</h3>
+        <p>yt-dlp powered with a full queue system. Line up downloads and let them run in the background.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎵</span>
+        <h3>Proper MP3 Metadata</h3>
+        <p>Thumbnail scraped and embedded as album art. Artist and title embedded as ID3 tags. Every music player shows it correctly.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📦</span>
+        <h3>Import / Export</h3>
+        <p>Export any folder as a ZIP and share it. Anyone with LinkVault can import your full collection instantly.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔍</span>
+        <h3>Cross-Folder Search</h3>
+        <p>Search by artist or song name from the main screen. Find anything across all your folders instantly.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>Fully Private</h3>
+        <p>No account. No analytics. No telemetry. Everything stays on your device. Always.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section class="download-section" id="download">
+    <div class="download-inner">
+      <p class="section-label">Get the app</p>
+      <h2 class="section-title">Download LinkVault</h2>
+      <p style="color: var(--muted); font-size: 14px; margin-top: -40px; margin-bottom: 0;">Not sure which to pick? Download <strong style="color:var(--accent)">arm64-v8a</strong> — it works on almost every modern Android phone.</p>
+      <div class="apk-grid">
+        <a href="https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-arm64-v8a" class="apk-card recommended" target="_blank">
+          <span class="apk-badge">Recommended</span>
+          <span class="apk-arch">arm64-v8a</span>
+          <p class="apk-desc">Most Android phones 2016 and newer. If you're unsure, this is the one.</p>
+          <span class="apk-arrow">↓</span>
+        </a>
+        <a href="https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-armeabi-v7a" class="apk-card" target="_blank">
+          <span class="apk-arch">armeabi-v7a</span>
+          <p class="apk-desc">Older or budget 32-bit Android devices.</p>
+          <span class="apk-arrow">↓</span>
+        </a>
+        <a href="https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-x86_64" class="apk-card" target="_blank">
+          <span class="apk-arch">x86_64</span>
+          <p class="apk-desc">Android emulators and Intel-based Android devices (64-bit).</p>
+          <span class="apk-arrow">↓</span>
+        </a>
+        <a href="https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-x86" class="apk-card" target="_blank">
+          <span class="apk-arch">x86</span>
+          <p class="apk-desc">Older 32-bit Android emulators and Intel devices.</p>
+          <span class="apk-arrow">↓</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBPAGES -->
+  <section class="subpages">
+    <p class="section-label">More info</p>
+    <h2 class="section-title">Learn more</h2>
+    <div class="subpage-grid">
+      <a href="changelog.html" class="subpage-card">
+        <span class="subpage-num">01</span>
+        <h3>Changelog</h3>
+        <p>Every version, every fix, every new feature. See exactly what changed and when.</p>
+        <span class="subpage-link">View changelog →</span>
+      </a>
+      <a href="privacy.html" class="subpage-card">
+        <span class="subpage-num">02</span>
+        <h3>Privacy Policy</h3>
+        <p>What data we collect (nothing), what we do with it (nothing), and why you can trust that.</p>
+        <span class="subpage-link">Read privacy policy →</span>
+      </a>
+      <a href="https://github.com/DamienSmith428/LinkVault/issues" class="subpage-card" target="_blank">
+        <span class="subpage-num">03</span>
+        <h3>Report a Bug</h3>
+        <p>Found something broken? Open an issue on GitHub and it will get looked at.</p>
+        <span class="subpage-link">Open an issue →</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="logo">LinkVault</span>
+  <p>Built by <a href="https://github.com/DamienSmith428" target="_blank">DamienSmith428</a>. Open source under MIT.</p>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="https://github.com/DamienSmith428/LinkVault" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog — LinkVault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --surface: #0d1117;
+    --border: #1a2030;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --text: #e8edf5;
+    --muted: #4a5568;
+    --card: #0f1520;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(8,11,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--text); }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 140px 24px 100px;
+  }
+
+  .page-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 64px;
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .release {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 32px;
+    padding-bottom: 56px;
+    position: relative;
+  }
+
+  .release::before {
+    content: '';
+    position: absolute;
+    left: 140px;
+    top: 12px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .release:last-child::before { display: none; }
+
+  .release-meta {
+    text-align: right;
+    padding-top: 2px;
+  }
+
+  .release-version {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .release-date {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  .release-body {
+    padding-left: 32px;
+    border-left: none;
+  }
+
+  .release-dot {
+    position: absolute;
+    left: 135px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 12px rgba(0,212,255,0.5);
+  }
+
+  .release-dot.old {
+    background: var(--muted);
+    box-shadow: none;
+  }
+
+  .release-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  .tag-initial { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+
+  .change-group { margin-bottom: 20px; }
+
+  .change-group-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .change-group-label.added { color: var(--green); }
+  .change-group-label.added::before { content: '+'; font-size: 14px; font-weight: 700; }
+
+  .change-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .change-list li {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .change-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--border);
+  }
+
+  .release-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: 16px;
+    transition: gap 0.2s;
+  }
+
+  .release-link:hover { gap: 12px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: var(--accent); }
+  footer p { font-size: 12px; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: none; font-size: 12px; transition: color 0.2s; }
+  footer a:hover { color: var(--accent); }
+  .footer-links { display: flex; gap: 24px; }
+
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    .release { grid-template-columns: 1fr; }
+    .release::before { display: none; }
+    .release-dot { display: none; }
+    .release-meta { text-align: left; }
+    .release-body { padding-left: 0; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Link<span>Vault</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#download">Download</a></li>
+    <li><a href="changelog.html">Changelog</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="https://github.com/DamienSmith428/LinkVault" target="_blank">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <p class="page-label">Release history</p>
+  <h1 class="page-title">Changelog</h1>
+
+  <div class="timeline">
+
+    <div class="release">
+      <div class="release-dot"></div>
+      <div class="release-meta">
+        <div class="release-version">v1.0</div>
+        <div class="release-date">2026</div>
+      </div>
+      <div class="release-body">
+        <span class="release-tag tag-initial">Initial Release</span>
+        <div class="change-group">
+          <div class="change-group-label added">Added</div>
+          <ul class="change-list">
+            <li>Folder-based link organization</li>
+            <li>Built-in yt-dlp powered downloader with background queue system</li>
+            <li>YouTube metadata scraping — thumbnail embedded as album art, artist and title embedded as ID3 tags in downloaded MP3</li>
+            <li>Auto-naming on share sheet import — app scrapes title, artist, and song name when a link is shared into it</li>
+            <li>Manual rename support for any link</li>
+            <li>ZIP import and export system for sharing complete folder collections</li>
+            <li>Cross-folder search by artist name or song title from the main screen</li>
+            <li>Available in four APK builds: arm64-v8a, armeabi-v7a, x86_64, x86</li>
+          </ul>
+        </div>
+        <a href="https://github.com/DamienSmith428/LinkVault/releases" class="release-link" target="_blank">
+          View release on GitHub →
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span class="logo">LinkVault</span>
+  <p>Built by <a href="https://github.com/DamienSmith428" target="_blank">DamienSmith428</a>. Open source under MIT.</p>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="https://github.com/DamienSmith428/LinkVault" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
