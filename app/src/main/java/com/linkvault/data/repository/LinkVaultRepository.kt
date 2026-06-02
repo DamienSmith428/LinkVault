@@ -18,7 +18,6 @@ class LinkVaultRepository @Inject constructor(
     private val linkDao: LinkDao
 ) {
 
-    // ─── Folders ──────────────────────────────────────────────────────────────
 
     fun getAllFolders(): Flow<List<Folder>> {
         return folderDao.getAllFolders().flatMapLatest { folders ->
@@ -77,7 +76,6 @@ class LinkVaultRepository @Inject constructor(
         folderDao.deleteFolderById(id)
     }
 
-    // ─── Links ────────────────────────────────────────────────────────────────
 
     fun getLinksForFolder(folderId: Long): Flow<List<Link>> {
         return linkDao.getLinksForFolder(folderId).map { entities ->
@@ -150,7 +148,6 @@ class LinkVaultRepository @Inject constructor(
         linkDao.moveLinksToFolder(ids, targetFolderId)
     }
 
-    // ─── Export/Import ────────────────────────────────────────────────────────
 
     suspend fun getFoldersWithLinksForExport(): List<FolderWithLinks> {
         val folderEntities = folderDao.getAllFoldersSync()
@@ -176,14 +173,12 @@ class LinkVaultRepository @Inject constructor(
 
     suspend fun importFoldersWithLinks(data: List<FolderWithLinks>) {
         data.forEach { folderWithLinks ->
-            // Try to find existing folder with same name or create new
             var folderId = folderDao.getFolderByName(folderWithLinks.folderName)?.id
             if (folderId == null) {
                 folderId = folderDao.insertFolder(FolderEntity(name = folderWithLinks.folderName))
             }
 
             folderWithLinks.links.forEach { linkExport ->
-                // Check for duplicates before inserting
                 val duplicate = linkDao.findDuplicate(folderId!!, linkExport.url)
                 if (duplicate == null) {
                     linkDao.insertLink(
@@ -198,7 +193,6 @@ class LinkVaultRepository @Inject constructor(
         }
     }
 
-    // ─── Mappers ──────────────────────────────────────────────────────────────
 
     private fun FolderEntity.toDomain(linkCount: Int = 0) = Folder(
         id = id,
