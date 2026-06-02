@@ -33,7 +33,6 @@ class LinkVaultApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         
-        // Ensure WorkManager is initialized with HiltWorkerFactory
         initWorkManager()
         
         initYoutubeDL()
@@ -55,7 +54,6 @@ class LinkVaultApplication : Application(), Configuration.Provider {
             FFmpeg.getInstance().init(this)
             Log.d("LinkVault", "YoutubeDL and FFmpeg initialized successfully")
             
-            // Update extractors in background to support latest YouTube changes
             applicationScope.launch {
                 try {
                     YoutubeDL.getInstance().updateYoutubeDL(this@LinkVaultApplication)
