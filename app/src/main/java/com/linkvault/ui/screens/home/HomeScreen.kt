@@ -270,7 +270,6 @@ fun HomeScreen(
         }
     }
 
-    // Create Folder Dialog
     if (uiState.showCreateFolderDialog) {
         FolderNameDialog(
             title = "New Folder",
@@ -282,7 +281,6 @@ fun HomeScreen(
         )
     }
 
-    // Rename Dialog
     uiState.folderToRename?.let {
         FolderNameDialog(
             title = "Rename Folder",
@@ -294,7 +292,6 @@ fun HomeScreen(
         )
     }
 
-    // Delete Dialog
     uiState.folderToDelete?.let { folder ->
         AlertDialog(
             onDismissRequest = viewModel::dismissDeleteDialog,
