@@ -54,14 +54,12 @@ class ShareViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isFetchingMetadata = true) }
             
-            // Step 1: Fast scrape with Jsoup for immediate result
             val quickTitle = fetchJsoupMetadata(url)
             if (quickTitle != null) {
                 val cleanTitle = quickTitle.replace(" - YouTube", "").trim()
                 _uiState.update { it.copy(title = cleanTitle) }
             }
 
-            // Step 2: If it's YouTube, try to get better Artist - Title formatting via YoutubeDL
             if (url.contains("youtube.com") || url.contains("youtu.be")) {
                 try {
                     val metadata = withContext(Dispatchers.IO) {
@@ -97,7 +95,6 @@ class ShareViewModel @Inject constructor(
                 .timeout(5000)
                 .get()
             
-            // Priority: OpenGraph Title -> Page Title -> Meta Title
             doc.select("meta[property=og:title]").attr("content").takeIf { it.isNotBlank() }
                 ?: doc.title().takeIf { it.isNotBlank() }
                 ?: doc.select("meta[name=title]").attr("content")
