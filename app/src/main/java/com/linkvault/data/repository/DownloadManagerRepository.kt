@@ -19,12 +19,10 @@ class DownloadManagerRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: DownloadRepository
 ) {
-    // Initialize WorkManager lazily to avoid triggering it before Application.onCreate is ready
     private val workManager by lazy { WorkManager.getInstance(context) }
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
-        // Observe queue to start next download if idle
         scope.launch {
             repository.allDownloads
                 .distinctUntilChanged()
@@ -63,7 +61,6 @@ class DownloadManagerRepository @Inject constructor(
             .setBackoffCriteria(BackoffPolicy.LINEAR, WorkRequest.MIN_BACKOFF_MILLIS, java.util.concurrent.TimeUnit.MILLISECONDS)
             .build()
 
-        // Use REPLACE to ensure we can recover from a stuck worker
         workManager.enqueueUniqueWork(
             "download_work_${download.id}",
             ExistingWorkPolicy.REPLACE,
