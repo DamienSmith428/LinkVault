@@ -19,7 +19,7 @@ data class DownloadEntity(
     val progress: Float = 0f,
     val speed: String = "",
     val eta: String = "",
-    val formatSelection: String = "best", // e.g., "bestvideo+bestaudio/best", "bestaudio"
+    val formatSelection: String = "best", 
     val downloadPath: String = "",
     val error: String? = null,
     val addedAt: Long = System.currentTimeMillis()
