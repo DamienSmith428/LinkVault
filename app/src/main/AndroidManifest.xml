@@ -21,7 +21,6 @@
         android:theme="@style/Theme.LinkVault"
         android:extractNativeLibs="true">
 
-        <!-- Explicitly declare SystemForegroundService with the required foregroundServiceType for Android 14+ -->
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
@@ -62,7 +61,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Disable default WorkManager initializer to use HiltWorkerFactory -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
