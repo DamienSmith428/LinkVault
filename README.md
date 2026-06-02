@@ -59,7 +59,7 @@ LinkVault is not on the Google Play Store. You install it by sideloading the APK
 
 **1. Download the APK**
 
-Go to the [Releases](../../releases) page and download the latest `.apk` file that works for your device.
+Go to the [Releases](#releases) section below and download the APK that matches your device.
 
 **2. Enable unknown sources on your device**
 
@@ -74,9 +74,12 @@ No account, no setup, no permissions you did not agree to.
 
 ## Releases
 
-| Version | Notes |
-|---|---|
-| [v5.0](../../releases/tag/v5.0) | Current release |
+| Version | Architecture | Device Type |
+|---|---|---|
+| [LinkVault v1.0 — arm64-v8a](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-arm64-v8a) | arm64-v8a | Most phones 2016 and newer — **use this if unsure** |
+| [LinkVault v1.0 — armeabi-v7a](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-armeabi-v7a) | armeabi-v7a | Older or budget 32-bit Android devices |
+| [LinkVault v1.0 — x86_64](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-x86_64) | x86_64 | Android emulators and Intel-based Android devices (64-bit) |
+| [LinkVault v1.0 — x86](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-x86) | x86 | Older 32-bit Android emulators and Intel devices |
 
 ---
 
