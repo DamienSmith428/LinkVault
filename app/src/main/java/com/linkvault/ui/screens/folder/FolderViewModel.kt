@@ -200,11 +200,10 @@ class FolderViewModel @Inject constructor(
     fun onNewLinkUrlChange(url: String) {
         _uiState.update { it.copy(newLinkUrl = url) }
         
-        // Debounce scraping
         fetchJob?.cancel()
         if (url.startsWith("http")) {
             fetchJob = viewModelScope.launch {
-                delay(800) // Wait for user to finish typing
+                delay(800)
                 fetchMetadata(url)
             }
         }
@@ -214,14 +213,12 @@ class FolderViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isFetchingMetadata = true) }
             
-            // Step 1: Fast scrape with Jsoup
             val quickTitle = fetchJsoupMetadata(url)
             if (quickTitle != null && _uiState.value.newLinkTitle.isBlank()) {
                 val cleanTitle = quickTitle.replace(" - YouTube", "").trim()
                 _uiState.update { it.copy(newLinkTitle = cleanTitle) }
             }
 
-            // Step 2: Try YoutubeDL for better formatting
             if (url.contains("youtube.com") || url.contains("youtu.be")) {
                 try {
                     val metadata = withContext(Dispatchers.IO) {
@@ -242,7 +239,6 @@ class FolderViewModel @Inject constructor(
                         _uiState.update { it.copy(newLinkTitle = cleanTitle) }
                     }
                 } catch (e: Exception) {
-                    // Fallback already handled by Jsoup
                 }
             }
             
@@ -311,7 +307,7 @@ class FolderViewModel @Inject constructor(
                     title = link.title,
                     folderName = folderName,
                     format = format,
-                    path = "" // Default path will be handled by worker
+                    path = "" 
                 )
             }
             _uiState.update {
