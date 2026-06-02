@@ -3,7 +3,7 @@
 A personal media vault for Android. Organize your links into folders, download audio and video directly to your device, and own your media library without subscriptions, accounts, or cloud dependency.
 
 ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white)
-![Version](https://img.shields.io/badge/Version-5.0-blueviolet?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.0-blueviolet?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Built With](https://img.shields.io/badge/Built%20with-Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
 
@@ -49,7 +49,7 @@ No account. No subscription. No algorithm. Just your library, the way you built 
 
 ## Screenshots
 
-> *(Add screenshots here)*
+> *(Screenshots Soon)*
 
 ---
 
@@ -59,7 +59,7 @@ LinkVault is not on the Google Play Store. You install it by sideloading the APK
 
 **1. Download the APK**
 
-Go to the [Releases](../../releases) page and download the latest `.apk` file.
+Go to the [Releases](../../releases) page and download the latest `.apk` file that works for your device.
 
 **2. Enable unknown sources on your device**
 
