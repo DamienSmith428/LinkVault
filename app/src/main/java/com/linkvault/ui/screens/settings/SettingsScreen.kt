@@ -1,5 +1,6 @@
 package com.linkvault.ui.screens.settings
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,8 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,6 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.linkvault.BuildConfig
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -123,6 +131,51 @@ fun SettingsScreen(
                     selected = themeMode == mode,
                     onClick = { viewModel.setThemeMode(mode) }
                 )
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            SectionHeader("App Updates")
+            val lastChecked by viewModel.lastUpdateCheck.collectAsStateWithLifecycle()
+            val isChecking by viewModel.isCheckingUpdates.collectAsStateWithLifecycle()
+            val isUpdateAvailable by viewModel.isUpdateAvailable.collectAsStateWithLifecycle()
+            val latestVersion by viewModel.latestVersion.collectAsStateWithLifecycle()
+
+            val dateFormat = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+            val lastCheckedStr = if (lastChecked == 0L) "Never" else dateFormat.format(Date(lastChecked))
+
+            SettingsItem(
+                title = "Current Version",
+                subtitle = "${BuildConfig.VERSION_NAME} (Last checked: $lastCheckedStr)",
+                icon = { Icon(Icons.Default.Update, contentDescription = null) },
+                onClick = {}
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (isChecking) {
+                    CircularProgressIndicator(modifier = Modifier.width(24.dp).height(24.dp), strokeWidth = 2.dp)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text("Checking for updates...", style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    Button(
+                        onClick = {
+                            if (isUpdateAvailable) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://damiensmith428.github.io/linkvault-web/"))
+                                context.startActivity(intent)
+                            } else {
+                                viewModel.checkForUpdates()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(if (isUpdateAvailable) "Update Now (v$latestVersion)" else "Check for Updates")
+                    }
+                }
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

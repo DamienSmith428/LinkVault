@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,6 +24,8 @@ class UserPreferences @Inject constructor(
     companion object {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val DOWNLOAD_LOCATION = stringPreferencesKey("download_location")
+        val LAST_UPDATE_CHECK = longPreferencesKey("last_update_check")
+        val LATEST_VERSION = stringPreferencesKey("latest_version")
     }
 
     val themeMode: Flow<String> = dataStore.data.map { prefs ->
@@ -32,6 +34,14 @@ class UserPreferences @Inject constructor(
 
     val downloadLocation: Flow<String> = dataStore.data.map { prefs ->
         prefs[DOWNLOAD_LOCATION] ?: ""
+    }
+
+    val lastUpdateCheck: Flow<Long> = dataStore.data.map { prefs ->
+        prefs[LAST_UPDATE_CHECK] ?: 0L
+    }
+
+    val latestVersion: Flow<String> = dataStore.data.map { prefs ->
+        prefs[LATEST_VERSION] ?: ""
     }
 
     suspend fun setThemeMode(mode: String) {
@@ -43,6 +53,18 @@ class UserPreferences @Inject constructor(
     suspend fun setDownloadLocation(path: String) {
         dataStore.edit { prefs ->
             prefs[DOWNLOAD_LOCATION] = path
+        }
+    }
+
+    suspend fun setLastUpdateCheck(timestamp: Long) {
+        dataStore.edit { prefs ->
+            prefs[LAST_UPDATE_CHECK] = timestamp
+        }
+    }
+
+    suspend fun setLatestVersion(version: String) {
+        dataStore.edit { prefs ->
+            prefs[LATEST_VERSION] = version
         }
     }
 }

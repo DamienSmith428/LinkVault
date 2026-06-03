@@ -7,7 +7,10 @@ import android.os.Build
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.linkvault.update.UpdateWorker
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.YoutubeDL
 import dagger.hilt.android.HiltAndroidApp
@@ -37,6 +40,17 @@ class LinkVaultApplication : Application(), Configuration.Provider {
         
         initYoutubeDL()
         createNotificationChannel()
+        scheduleUpdateCheck()
+    }
+
+    private fun scheduleUpdateCheck() {
+        val updateRequest = PeriodicWorkRequestBuilder<UpdateWorker>(1, java.util.concurrent.TimeUnit.DAYS)
+            .build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "update_check",
+            ExistingPeriodicWorkPolicy.KEEP,
+            updateRequest
+        )
     }
 
     private fun initWorkManager() {
