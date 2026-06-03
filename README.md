@@ -3,7 +3,7 @@
 A personal media vault for Android. Organize your links into folders, download audio and video directly to your device, and own your media library without subscriptions, accounts, or cloud dependency.
 
 ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white)
-![Version](https://img.shields.io/github/v/release/DamienSmith428/LinkVault?style=flat-square&color=blueviolet&label=Version)
+![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FDamienSmith428%2FLinkVault-web%2Fmain%2Fdocs%2Fconfig.json&query=%24.app.latestVersion&style=flat-square&color=blueviolet&label=Latest+Version)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Built With](https://img.shields.io/badge/Built%20with-Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
 
