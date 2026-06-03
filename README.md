@@ -74,12 +74,16 @@ No account, no setup, no permissions you did not agree to.
 
 ## Releases
 
-| Version | Architecture | Device Type |
+All architectures are bundled in the same release. Download the APK that matches your device.
+
+| Architecture | Device Type | Download |
 |---|---|---|
-| [LinkVault v1.0 — arm64-v8a](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-arm64-v8a) | arm64-v8a | Most phones 2016 and newer — **use this if unsure** |
-| [LinkVault v1.0 — armeabi-v7a](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-armeabi-v7a) | armeabi-v7a | Older or budget 32-bit Android devices |
-| [LinkVault v1.0 — x86_64](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-x86_64) | x86_64 | Android emulators and Intel-based Android devices (64-bit) |
-| [LinkVault v1.0 — x86](https://github.com/DamienSmith428/LinkVault/releases/tag/LinkVault-x86) | x86 | Older 32-bit Android emulators and Intel devices |
+| arm64-v8a | Most phones 2016 and newer — **use this if unsure** | [Download](https://github.com/DamienSmith428/LinkVault/releases/latest/download/app-arm64-v8a-release.apk) |
+| armeabi-v7a | Older or budget 32-bit Android devices | [Download](https://github.com/DamienSmith428/LinkVault/releases/latest/download/app-armeabi-v7a-release.apk) |
+| x86_64 | Android emulators and Intel-based Android devices (64-bit) | [Download](https://github.com/DamienSmith428/LinkVault/releases/latest/download/app-x86_64-release.apk) |
+| x86 | Older 32-bit Android emulators and Intel devices | [Download](https://github.com/DamienSmith428/LinkVault/releases/latest/download/app-x86-release.apk) |
+
+View all releases and changelogs on the [Releases page](https://github.com/DamienSmith428/LinkVault/releases).
 
 ---
 
