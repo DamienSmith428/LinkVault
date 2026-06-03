@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,9 +35,8 @@ class SettingsViewModel @Inject constructor(
     private val _isCheckingUpdates = MutableStateFlow(false)
     val isCheckingUpdates = _isCheckingUpdates.asStateFlow()
 
-    val isUpdateAvailable: StateFlow<Boolean> = combine(latestVersion) { versions ->
-        val latest = versions[0]
-        if (latest.isEmpty()) false else updateManager.isNewerVersion(latest)
+    val isUpdateAvailable: StateFlow<Boolean> = latestVersion.map { version ->
+        if (version.isEmpty()) false else updateManager.isNewerVersion(version)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     fun setThemeMode(mode: String) {
