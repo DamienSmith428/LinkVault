@@ -49,9 +49,12 @@ No account. No subscription. No algorithm. Just your library, the way you built 
 
 ## Screenshots
 
-| | | | |
-|---|---|---|---|
-| <img src="images/5.png" width="200"> | <img src="images/6.png" width="200"> | <img src="images/7.png" width="200"> | <img src="images/8.png" width="200"> |
+<p align="center">
+  <img src="images/5.png" width="200" />
+  <img src="images/6.png" width="200" />
+  <img src="images/7.png" width="200" />
+  <img src="images/8.png" width="200" />
+</p>
 
 ---
 
