@@ -1,9 +1,12 @@
 package com.linkvault.download
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.documentfile.provider.DocumentFile
@@ -135,6 +138,8 @@ class DownloadWorker @AssistedInject constructor(
 
             if (globalDownloadLocation.isNotEmpty()) {
                 moveFilesToSaf(downloadDir, globalDownloadLocation)
+            } else {
+                moveToPublicDownloads(downloadDir)
             }
             
             Result.success()
@@ -142,6 +147,75 @@ class DownloadWorker @AssistedInject constructor(
             Log.e(TAG, "Download failed: ${download.url}", e)
             repository.updateDownload(download.copy(status = DownloadStatus.FAILED, error = e.message))
             Result.failure()
+        }
+    }
+
+    private suspend fun moveToPublicDownloads(tempDir: File) = withContext(Dispatchers.IO) {
+        try {
+            val files = tempDir.listFiles() ?: return@withContext
+            Log.d(TAG, "Moving ${files.size} files to Public Downloads")
+
+            for (file in files) {
+                if (file.isDirectory) continue
+                
+                val mimeType = getMimeType(file)
+                
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/LinkVault")
+                        put(MediaStore.MediaColumns.IS_PENDING, 1)
+                    }
+                }
+
+                val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                } else {
+                    // Fallback for older versions (might require WRITE_EXTERNAL_STORAGE)
+                    @Suppress("DEPRECATION")
+                    Uri.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS))
+                    MediaStore.Files.getContentUri("external")
+                }
+
+                val uri = context.contentResolver.insert(collection, contentValues)
+                if (uri != null) {
+                    try {
+                        context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            file.inputStream().use { inputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            contentValues.clear()
+                            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                            context.contentResolver.update(uri, contentValues, null, null)
+                        }
+                        file.delete()
+                        Log.d(TAG, "Successfully moved ${file.name} to Public Downloads: $uri")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to write data to MediaStore for ${file.name}", e)
+                    }
+                } else {
+                    Log.e(TAG, "Failed to create MediaStore entry for ${file.name}")
+                }
+            }
+            tempDir.delete()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error moving files to Public Downloads", e)
+        }
+    }
+
+    private fun getMimeType(file: File): String {
+        return when (file.extension.lowercase()) {
+            "mp3" -> "audio/mpeg"
+            "m4a" -> "audio/mp4"
+            "webm" -> "video/webm"
+            "mp4" -> "video/mp4"
+            "jpg", "jpeg" -> "image/jpeg"
+            "png" -> "image/png"
+            "webp" -> "image/webp"
+            else -> "application/octet-stream"
         }
     }
 
@@ -161,16 +235,7 @@ class DownloadWorker @AssistedInject constructor(
                 if (file.isDirectory) continue
                 Log.d(TAG, "Attempting to move ${file.name} (${file.length()} bytes) to SAF")
 
-                val mimeType = when (file.extension.lowercase()) {
-                    "mp3" -> "audio/mpeg"
-                    "m4a" -> "audio/mp4"
-                    "webm" -> "video/webm"
-                    "mp4" -> "video/mp4"
-                    "jpg", "jpeg" -> "image/jpeg"
-                    "png" -> "image/png"
-                    "webp" -> "image/webp"
-                    else -> "application/octet-stream"
-                }
+                val mimeType = getMimeType(file)
 
                 val existingFile = docFile.findFile(file.name)
                 if (existingFile != null) {
